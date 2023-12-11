@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 import uuid
+from fastapi.exceptions import HTTPException
 from datetime import datetime
 from .schemas import ShortUrl, ShortUrlView, ShortUrlBase, Url, StatsView
 from db.db_url import create_short_url as db_create_short_url
@@ -17,13 +18,13 @@ router = APIRouter(
 @router.post("/", response_model=ShortUrlView)
 def get_long_url(request: ShortUrlBase, db: Session = Depends(get_db)):
     if not check_url_validity(request.short_url):
-        return {"error": "Invalid URL"}
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid URL")
     return db_find_long_url(db, request.short_url)
 
 @router.post('/shorten/', response_model=ShortUrlView)
 def shorten_url(request: Url, db: Session = Depends(get_db)):
     if not check_url_validity(request.url):
-        return {"error": "Invalid URL"}
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid URL")
     unique_id = uuid.uuid4()
     base62_id = uuid.uuid4().int
     short_base62_id = str(base62_id)[:7]
@@ -40,5 +41,5 @@ def shorten_url(request: Url, db: Session = Depends(get_db)):
 @router.post('/stats/', response_model=StatsView)
 def get_stats(request: ShortUrlBase, db: Session = Depends(get_db)):
     if not check_url_validity(request.short_url):
-        return {"error": "Invalid URL"}
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid URL")
     return db_get_stats(db, request.short_url)
