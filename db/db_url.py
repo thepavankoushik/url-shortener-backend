@@ -10,8 +10,11 @@ def create_short_url(db: Session, short_url: ShortUrl):
     db.refresh(db_short_url)
     return db_short_url
 
-def find_long_url(db: Session, short_url):
+def get_long_url(db: Session, short_url):
     return db.query(DbShortURL).filter(DbShortURL.short_url == short_url).first()
+
+def get_short_url(db: Session, long_url: str):
+    return db.query(DbShortURL).filter(DbShortURL.long_url == long_url).first()
 
 
 def update_stats(db: Session, short_url: str, long_url: str):
