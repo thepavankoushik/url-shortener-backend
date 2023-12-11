@@ -1,1 +1,3 @@
 env/
+url_api.db
+__pycache__/
