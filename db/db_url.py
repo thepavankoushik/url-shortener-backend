@@ -11,9 +11,7 @@ def create_short_url(db: Session, short_url: ShortUrl):
     return db_short_url
 
 def find_long_url(db: Session, short_url):
-    result = db.query(DbShortURL).filter(DbShortURL.short_url == short_url).first()
-    update_stats(db, short_url, result.long_url)
-    return result
+    return db.query(DbShortURL).filter(DbShortURL.short_url == short_url).first()
 
 
 def update_stats(db: Session, short_url: str, long_url: str):
